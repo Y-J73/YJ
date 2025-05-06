@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多人連線桌遊</title>
+    <title>多人卡片遊戲</title>
     <link rel="stylesheet" href="styles.css">
     <!-- GUN.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
@@ -13,7 +13,7 @@
 <body>
     <div id="app">
         <div id="login-section">
-            <h1>多人連線桌遊</h1>
+            <h1>多人卡片遊戲</h1>
             <div class="login-container">
                 <input type="text" id="playerName" placeholder="輸入您的名字">
                 <button id="joinGame">加入遊戲</button>
@@ -23,14 +23,20 @@
         <div id="game-section" style="display: none;">
             <div class="game-info">
                 <h2>遊戲房間</h2>
+                <div class="game-status">
+                    <div id="current-turn"></div>
+                    <div id="score-board"></div>
+                </div>
                 <div id="players-list">
-                    <h3>線上玩家</h3>
+                    <h3>玩家</h3>
                     <ul id="players"></ul>
                 </div>
             </div>
             
             <div class="game-board">
-                <div id="game-area"></div>
+                <div id="game-area">
+                    <div id="cards-container"></div>
+                </div>
             </div>
 
             <div class="game-controls">
