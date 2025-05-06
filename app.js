@@ -1,6 +1,6 @@
 // 初始化 GUN
 const gun = Gun({
-    peers: ['https://gun-manhattan.herokuapp.com/gun']
+    peers: ['http://localhost:3000/gun']  // 改用本地伺服器
 });
 
 // 遊戲狀態管理
@@ -100,11 +100,15 @@ players.map().on((player, id) => {
 
 // 開始遊戲
 function startGame() {
+    console.log('執行開始遊戲函數');
     const shuffledCards = CARDS.sort(() => Math.random() - 0.5);
     gameData.get('cards').put(shuffledCards);
-    gameData.get('currentTurn').put(getFirstPlayer().id);
-    
-    renderCards(shuffledCards);
+    const firstPlayer = getFirstPlayer();
+    console.log('第一位玩家:', firstPlayer);
+    if (firstPlayer) {
+        gameData.get('currentTurn').put(firstPlayer.id);
+        renderCards(shuffledCards);
+    }
 }
 
 // 渲染卡片
@@ -234,13 +238,26 @@ function resetGame() {
 players.map().on((player) => {
     if (!player) return;
     
+    console.log('檢測到玩家狀態改變');
+    
     let allPlayers = [];
     players.map().once((p, id) => {
         if (p) allPlayers.push({...p, id});
     });
     
-    if (allPlayers.length >= 2 && allPlayers.every(p => p.ready)) {
-        startGame();
+    console.log('目前玩家狀態:', allPlayers);
+    
+    // 確保至少有兩個玩家且都已準備
+    if (allPlayers.length >= 2) {
+        console.log(`已有 ${allPlayers.length} 位玩家`);
+        const readyPlayers = allPlayers.filter(p => p.ready);
+        console.log(`已準備的玩家數: ${readyPlayers.length}`);
+        
+        if (readyPlayers.length >= 2) {
+            console.log('遊戲開始！');
+            gameData.get('gameStarted').put(true);
+            startGame();
+        }
     }
 });
 
