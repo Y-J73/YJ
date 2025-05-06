@@ -1,6 +1,6 @@
 // 初始化 GUN
 const gun = Gun({
-    peers: ['http://localhost:3000/gun']  // 改用本地伺服器
+    peers: ['http://localhost:3000/gun']  // 只連接本地伺服器
 });
 
 // 遊戲狀態管理
@@ -128,13 +128,24 @@ function renderCards(cards) {
 
 // 處理卡片點擊
 function handleCardClick(card) {
-    const gameData = gun.get('cardGame').get('gameData');
-    
+    if (!gameData.get('gameStarted')) {
+        console.log('遊戲尚未開始');
+        return;
+    }
+
     gameData.get('currentTurn').once(currentTurnId => {
+        console.log('當前回合:', currentTurnId, '當前玩家:', currentPlayer?.id);
+        
         if (!canFlip || 
             currentTurnId !== currentPlayer?.id || 
             card.classList.contains('flipped') || 
             card.classList.contains('matched')) {
+            console.log('不能翻牌的原因:', {
+                canFlip,
+                isWrongTurn: currentTurnId !== currentPlayer?.id,
+                isFlipped: card.classList.contains('flipped'),
+                isMatched: card.classList.contains('matched')
+            });
             return;
         }
 
